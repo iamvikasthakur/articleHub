@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const port = 9000;
+const port = process.env.PORT || 9000;
 const upload = require('./handlers/multer');
 require('dotenv').config();
 require('./handlers/mongodb');
@@ -10,6 +10,7 @@ require('./handlers/cloudinary');
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+// app.use('*', express.static(path.join(__dirname, "client", "build")))
 
 var corsOptions = {
   origin: '*',
@@ -38,6 +39,11 @@ app.use('/user', user);
 app.get('*', (req, res) => {
   res.send('Page Not Found');
 })
+
+
+if(process.env.NODE_ENV === "production"){
+  app.use(express.static('client/build'));
+}
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
